@@ -8,34 +8,28 @@ st.set_page_config(page_title="TikTok Downloader", page_icon="🎬", layout="cen
 st.title("🎬 TikTok Downloader")
 st.write("Paste a TikTok link below to fetch a watermark-free video.")
 
-# Initialize session state for tracking the active URL
-if "tiktok_url" not in st.session_state:
-    st.session_state.tiktok_url = ""
-
-# Callback function to clear the input field completely
+# Callback function to clear the text input natively using its state key
 def clear_text():
-    st.session_state.tiktok_url = ""
+    st.session_state["url_field"] = ""
 
 # Main link input bar - stretching full width for easier pasting on mobile
+# We use the key "url_field" to track its value directly
 url_input = st.text_input(
     "TikTok URL:", 
-    value=st.session_state.tiktok_url,
     placeholder="https://www.tiktok.com/...", 
     key="url_field"
 )
 
-# 🚀 The prominent physical button you wanted to tap!
+# 🚀 The prominent physical button to trigger download
 fetch_button = st.button("Fetch Video", type="primary", use_container_width=True)
 
-# 🗑️ Separate Clear button positioned safely below to prevent accidental misclicks
+# 🗑️ Separate Clear button positioned safely below
 st.write("")
 if url_input:
     st.button("🗑️ Clear Input Line", on_click=clear_text, use_container_width=True)
 
 # Run the download logic ONLY if the user explicitly hits the physical Fetch Button
 if fetch_button and url_input:
-    st.session_state.tiktok_url = url_input
-    
     with st.spinner("Processing video from TikTok CDN... Please wait."):
         # Unique matching ensures zero cross-device multi-user download interference
         outtmpl = 'downloaded_video_tmp_%(id)s.%(ext)s'
@@ -50,7 +44,7 @@ if fetch_button and url_input:
         
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([st.session_state.tiktok_url])
+                ydl.download([url_input])
             
             # Find the specific temporary file that was just created
             target_files = glob.glob("downloaded_video_tmp_*")
