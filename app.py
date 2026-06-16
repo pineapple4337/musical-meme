@@ -8,7 +8,28 @@ st.set_page_config(page_title="TikTok Downloader", page_icon="🎬", layout="cen
 st.title("🎬 Personal TikTok Downloader")
 st.write("Paste a TikTok link below to fetch a watermark-free video.")
 
-url = st.text_input("TikTok URL:", placeholder="https://www.tiktok.com/...")
+# Initialize session state for the URL input if it doesn't exist
+if "tiktok_url" not in st.session_state:
+    st.session_state.tiktok_url = ""
+
+# Callback function to clear the input
+def clear_text():
+    st.session_state.tiktok_url = ""
+
+# Layout for text input and clear button side-by-side
+col1, col2 = st.columns([4, 1])
+
+with col1:
+    url = st.text_input(
+        "TikTok URL:", 
+        placeholder="https://www.tiktok.com/...", 
+        key="tiktok_url"
+    )
+
+with col2:
+    # Adding a bit of padding to align the button with the text field
+    st.write("##") 
+    st.button("Clear 🗑️", on_click=clear_text, use_container_width=True)
 
 if url:
     with st.spinner("Processing video from TikTok CDN... Please wait."):
