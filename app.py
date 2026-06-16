@@ -5,7 +5,7 @@ import glob
 
 # Set up clean page configuration
 st.set_page_config(page_title="TikTok Downloader", page_icon="🎬", layout="centered")
-st.title("🎬 Personal TikTok Downloader")
+st.title("🎬 TikTok Downloader")
 st.write("Paste a TikTok link below to fetch a watermark-free video.")
 
 # Initialize session state for the URL input if it doesn't exist
