@@ -3,43 +3,44 @@ import yt_dlp
 import os
 import glob
 
+# Set up clean page configuration
 st.set_page_config(page_title="TikTok Downloader", page_icon="🎬", layout="centered")
 st.title("🎬 Personal TikTok Downloader")
 st.write("Paste a TikTok link below to fetch a watermark-free video.")
 
-# Input field for the URL
 url = st.text_input("TikTok URL:", placeholder="https://www.tiktok.com/...")
 
 if url:
     with st.spinner("Processing video from TikTok CDN... Please wait."):
-        # Unique template name to avoid file collision
-        outtmpl = 'downloaded_video_tmp_%.(ext)s'
+        # Using %(id)s prevents file conflicts if multiple devices use the cloud app simultaneously
+        outtmpl = 'downloaded_video_tmp_%(id)s.%(ext)s'
         
         ydl_opts = {
-            'format': 'bestvideo+bestaudio/best',
+            # Force standard MP4 format container so iOS Safari can play and save it natively
+            'format': 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best',
             'outtmpl': outtmpl,
             'restrictfilenames': True,
             'quiet': True,
+            'no_warnings': True,
         }
         
         try:
-            # 1. Download video from TikTok to your server/computer local disk
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([url])
             
-            # Find the downloaded file (handles extension differences like .mp4 or .mkv)
+            # Find the specific temporary file that was just created
             target_files = glob.glob("downloaded_video_tmp_*")
             
             if target_files:
                 video_file_path = target_files[0]
                 
-                # 2. Read the file bytes to serve them to the web browser
+                # Read the file bytes directly into memory
                 with open(video_file_path, "rb") as video_file:
                     video_bytes = video_file.read()
                 
                 st.success("Video fetched successfully!")
                 
-                # 3. Create a native browser download button
+                # Stream the file directly to your browser download manager
                 st.download_button(
                     label="📥 Save Video to Device",
                     data=video_bytes,
@@ -47,11 +48,9 @@ if url:
                     mime="video/mp4"
                 )
                 
-                # Clean up the server file afterward
+                # Clean up the cloud server storage instantly after memory transfer
                 os.remove(video_file_path)
             else:
                 st.error("Could not locate downloaded file.")
-                
         except Exception as e:
             st.error(f"Error fetching video: {e}")
-
