@@ -5,7 +5,7 @@ import glob
 
 # Set up clean page configuration
 st.set_page_config(page_title="TikTok Downloader", page_icon="🎬", layout="centered")
-st.title("🎬 Personal TikTok Downloader")
+st.title("🎬 TikTok Downloader")
 st.write("Paste a TikTok link below to fetch a watermark-free video.")
 
 # Initialize session state for tracking the active URL
@@ -25,7 +25,7 @@ url_input = st.text_input(
 )
 
 # 🚀 The prominent physical button you wanted to tap!
-fetch_button = st.button("🚀 Fetch Video", type="primary", use_container_width=True)
+fetch_button = st.button("Fetch Video", type="primary", use_container_width=True)
 
 # 🗑️ Separate Clear button positioned safely below to prevent accidental misclicks
 st.write("")
